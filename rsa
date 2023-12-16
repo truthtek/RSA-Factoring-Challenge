@@ -1,19 +1,22 @@
-def is_prime(num):
-    if num < 2:
-        return False
-    for i in range(2, int(num**0.5) + 1):
-        if num % i == 0:
-            return False
-    return True
+#!/bin/bash
 
-def factorize_rsa_number(n):
-    for i in range(2, n):
-        if n % i == 0 and is_prime(i) and is_prime(n // i):
-            return i, n // i
+# Usage function
+usage() {
+	echo "Usage: $0 <file>"
+	echo "  <file>  File containing positive integers (one per line)"
+}
 
-if __name__ == "__main__":
-    with open("rsa_numbers.txt", "r") as file:
-        rsa_number = int(file.readline().strip())
+# Check if file parameter is provided and exists
+if [ -z "$1" ] || [ ! -f "$1" ]; then
+	usage
+	exit 1
+fi
 
-    factors = factorize_rsa_number(rsa_number)
-    print(f"{rsa_number} = {factors[0]} * {factors[1]}")
+# Read the file line by line
+filename="$1"
+while IFS= read -r number; do
+	result=$(factor "$number")
+	second_num=$(echo $result | tr ":" "=" | cut -d " " -f 2 | tr -d " ")
+	third_num=$(expr $number / $second_num)
+	echo "$number=$third_num*$second_num"
+done < "$filename"
