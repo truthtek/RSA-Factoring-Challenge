@@ -1,0 +1,22 @@
+import sys
+
+def factorize_numbers(file):
+    with open(file, 'r') as f:
+        for line in f:
+            num = int(line.strip())
+            factors = factorize(num)
+            print(f"{num} = {factors[0]} * {factors[1]}")
+
+def factorize(num):
+    for i in range(2, int(num**0.5) + 1):
+        if num % i == 0:
+            return (i, num // i)
+    return (1, num)
+
+if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print("Usage: factors <file>")
+        sys.exit(1)
+    
+    file = sys.argv[1]
+    factorize_numbers(file)
