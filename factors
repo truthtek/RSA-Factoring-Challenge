@@ -1,22 +1,22 @@
-import sys
+#!/bin/bash
 
-def factorize_numbers(file):
-    with open(file, 'r') as f:
-        for line in f:
-            num = int(line.strip())
-            factors = factorize(num)
-            print(f"{num} = {factors[0]} * {factors[1]}")
+# Usage function
+usage() {
+	echo "Usage: $0 <file>"
+	echo "  <file>  File containing positive integers (one per line)"
+}
 
-def factorize(num):
-    for i in range(2, int(num**0.5) + 1):
-        if num % i == 0:
-            return (i, num // i)
-    return (1, num)
+# Check if file parameter is provided and exists
+if [ -z "$1" ] || [ ! -f "$1" ]; then
+	usage
+	exit 1
+fi
 
-if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("Usage: factors <file>")
-        sys.exit(1)
-    
-    file = sys.argv[1]
-    factorize_numbers(file)
+# Read the file line by line
+filename="$1"
+while IFS= read -r number; do
+	result=$(factor "$number")
+	second_num=$(echo $result | tr ":" "=" | cut -d " " -f 2 | tr -d " ")
+	third_num=$(expr $number / $second_num)
+	echo "$number=$third_num*$second_num"
+done < "$filename"
